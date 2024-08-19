@@ -8,29 +8,37 @@ use Illuminate\Support\Facades\Storage;
 
 class AvatarService
 {
-    public function __construct(private TwitchClient $client)
-    {
-
-    }
+    public function __construct(private TwitchClient $client) {}
 
     public function fetchAvatarUrl(string $username): string
     {
         $twitchUserResponse = $this->client->getUsers([$username]);
         $twitchUserJson = $twitchUserResponse->json()['data'][0] ?? null;
 
-
-        if (!$twitchUserJson) {
+        if (! $twitchUserJson) {
             throw TwitchException::userNotFound($username);
         }
 
         return $twitchUserJson['profile_image_url'];
     }
 
+    public function fetchCategoryAvatarUrl(string $categorySlug)
+    {
+        $twitchCategoryResponse = $this->client->getCategories($categorySlug);
+        $twitchCategoryJson = $twitchCategoryResponse->json()['data'][0] ?? null;
+
+        if (! $twitchCategoryJson) {
+            throw TwitchException::categoryNotFound($categorySlug);
+        }
+
+        return $twitchCategoryJson['box_art_url'];
+    }
+
     public function downloadAvatarImage(string $username): void
     {
         $avatarUrl = $this->fetchAvatarUrl($username);
 
-        $storagePath = sprintf('avatars/' . $username . '.png');
+        $storagePath = sprintf('avatars/'.$username.'.png');
         Storage::put($storagePath, file_get_contents($avatarUrl));
     }
 }

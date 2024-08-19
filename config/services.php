@@ -35,6 +35,7 @@ return [
         'key' => env('TWITCH_CLIENT_ID'),
         'secret' => env('TWITCH_CLIENT_SECRET'),
         'token' => env('TWITCH_APP_TOKEN'),
+        'redirect_uri' => env('TWITCH_REDIRECT_URI'),
     ],
 
 ];
